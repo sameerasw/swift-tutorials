@@ -13,8 +13,6 @@ struct ContentView: View {
     @State private var width: String = ""
     @State private var depth: String = ""
     @State private var cost: String = ""
-    @State private var advancedMode: Bool = false
-    @State private var errorText: String = ""
 
     var isDisabled: Bool {
         weight.isEmpty || height.isEmpty || width.isEmpty || depth.isEmpty
@@ -89,16 +87,6 @@ struct ContentView: View {
                         .foregroundColor(.red)
                 }
             }
-
-            if errorText != "" {
-                Text("\(errorText)")
-                    .font(Font.body.bold())
-                    .foregroundColor(.red)
-            }
-
-            HStack{
-                Toggle("Advanced Calculator", isOn: $advancedMode)
-            }
         }
         .padding()
     }
@@ -110,21 +98,10 @@ struct ContentView: View {
         print("Depth: \(depth)")
         print("Weight: \(weight)")
 
-        if advancedMode {
-            validate()
-        }
-
         if let heightValue = Double(height), let widthValue = Double(width), let depthValue = Double(depth), let weightValue = Double(weight),
            weightValue > 0, heightValue > 0, widthValue > 0, depthValue > 0 {
             let volume = heightValue * widthValue * depthValue
             var totalCost = 3.00 // base cost
-
-
-            if advancedMode{
-                totalCost = 2.50
-                let dimensionalWeight = weightValue / 5000
-                let chargeableWeight = Int(ceil(dimensionalWeight))
-            }
 
             // weight charge
             totalCost += weightValue * 0.50
@@ -133,28 +110,10 @@ struct ContentView: View {
             // ensure minimum charge
             totalCost = max(totalCost, 4.00)
             cost = String(format: "%.2f", totalCost)
-
-
             print("£"+cost)
         } else {
             print("Error: Enter a valid numeric amount")
         }
-    }
-
-    private func validate(){
-        if let heightValue = Double(height), let widthValue = Double(width), let depthValue = Double(depth), let weightValue = Double(weight), weightValue > 0, heightValue > 0, widthValue > 0, depthValue > 0 {
-
-            if weightValue > 30{
-                errorText = "Max weight: 30kg"
-            } else if heightValue > 150, widthValue > 150, depthValue > 150{
-                errorText = "Max dimension: 150cm"
-            }
-
-            return
-        } else {
-            errorText = "Input must be numeric or greater than 0"
-        }
-
     }
 }
 
